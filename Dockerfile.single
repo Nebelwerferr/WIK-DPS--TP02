@@ -1,0 +1,12 @@
+FROM node:20-alpine
+RUN addgroup -S devops && adduser -S Devops -G devops
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --omit=dev
+RUN npm install typescript
+COPY . .
+RUN npx tsc
+RUN npm uninstall typescript
+RUN rm -rf *.ts
+USER Devops
+CMD ["node", "index.js"]

@@ -1,0 +1,13 @@
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --omit=dev
+RUN npm install typescript
+COPY . .
+RUN npx tsc
+FROM node:20-alpine
+RUN addgroup -S devops && adduser -S Devops -G devops
+WORKDIR /app
+COPY --from=builder /app/index.js ./
+USER Devops
+CMD ["node", "index.js"]
